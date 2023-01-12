@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
 
 typedef struct {
 	float *tableauPile;
@@ -52,7 +54,7 @@ float popPile(pile *pile) {
 
 void affichagePile(pile *pile)
 {
-	printf("pile :");
+	printf("Resultat -> ");
 	for (size_t i = 0; i < pile->taillePile; i++) {
 		printf("%f ", pile->tableauPile[i]);
 	}
@@ -89,13 +91,38 @@ char** divisionChaineDeCaracteresDelimiterParEspace(char* string) {
 
 char** saisieUtilisateur(){
     char* saisieBrut = malloc(100*sizeof(char));
+
     printf("Saisir une chaine de caractere : ");
     fgets(saisieBrut, 100, stdin);
+
 	char** saisieFinal = divisionChaineDeCaracteresDelimiterParEspace(saisieBrut);
+
 	free(saisieBrut);
     return saisieFinal;
 }
 
+bool verificationRatioOperandeOperateur(char** tableau){
+	int compteurOperande = 0;
+	int compteurOperateur = 0;
+
+	for (int i = 0; tableau[i] != NULL; i++) {
+		if (strcmp(tableau[i], "+") == 0 || strcmp(tableau[i], "-") == 0 || strcmp(tableau[i], "*") == 0 || strcmp(tableau[i], "/") == 0) {
+			compteurOperateur++;
+		}
+		else if (strcmp(tableau[i], "\n") == 0) {
+			break;
+		}
+		else {
+			compteurOperande++;
+		}
+	}
+
+	if (compteurOperande == compteurOperateur + 1) {
+		return true;
+	} else {
+		return false;
+	}
+}
 float addition(float a, float b) {
     return a + b;
 }
@@ -153,29 +180,27 @@ int tailleTableauChar(char** tableau) {
 void calcul(pile *pile,char** tableau) {
 	int comptage = tailleTableauChar(tableau);
 	for (int i = 0; i < comptage; i++) {
-		printf("%s", tableau[i]);
 		if (strcmp(tableau[i], "+") == 0) {
-			printf("addition\n");
 			calculUneOperation(pile, '+');
 		}
+
 		else if (strcmp(tableau[i], "*") == 0) {
-			printf("multiplication\n");
 			calculUneOperation(pile, '*');
 		}
+
 		else if (strcmp(tableau[i], "-") == 0) {
-			printf("soustraction\n");
 			calculUneOperation(pile, '-');
 		}
+
 		else if (strcmp(tableau[i], "/") == 0) {
-			printf("division\n");
 			calculUneOperation(pile, '/');
 		}
-		else if (strcmp((tableau[i]), "\n") == 0) {
-			printf("fin de la chaine\n");
+
+		else if (strcmp(tableau[i], "\n") == 0) {
+			printf("Fin du Calcul\n");
 		}
 
 		else {
-			printf("push\n");
 			pushPile(pile, atoi(tableau[i]));
 		}
 	}
@@ -194,13 +219,19 @@ int main (int argc, char *argv[])
 {
 	char** chaineEntreeUtilisateur = saisieUtilisateur();
 
-	pile *pile = creationPile();
+	if (verificationRatioOperandeOperateur(chaineEntreeUtilisateur) == 1) {
 
-	calcul(pile, chaineEntreeUtilisateur);
+		pile *pile = creationPile();
 
-	affichagePile(pile);
+		calcul(pile, chaineEntreeUtilisateur);
 
-	liberationTableauChar(chaineEntreeUtilisateur);
+		affichagePile(pile);
 
-	liberationPile(pile);
+		liberationTableauChar(chaineEntreeUtilisateur);
+
+		liberationPile(pile);
+	} else {
+		printf("Erreur de saisie : Operateur insuffisants");
+	}
+
 }
