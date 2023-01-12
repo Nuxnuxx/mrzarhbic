@@ -53,7 +53,7 @@ float popPile(pile *pile) {
 void affichagePile(pile *pile)
 {
 	printf("pile :");
-	for (int i = 0; i < pile->taillePile; i++) {
+	for (size_t i = 0; i < pile->taillePile; i++) {
 		printf("%f ", pile->tableauPile[i]);
 	}
 }
@@ -113,7 +113,9 @@ float division(float a, float b) {
 }
 
 float calculUneOperation(pile *pile, char operation) {
-    float premierOperande, deuxiemeOperande, resultatCalcul;
+    float premierOperande;
+	float deuxiemeOperande;
+	float resultatCalcul;
     deuxiemeOperande = popPile(pile);
     premierOperande = popPile(pile);
     switch (operation) {
@@ -127,7 +129,7 @@ float calculUneOperation(pile *pile, char operation) {
             resultatCalcul = soustraction(premierOperande, deuxiemeOperande);
             break;
 		case '/':
-			if (deuxiemeOperande == 0) {
+			if(deuxiemeOperande == 0.0) {
 				printf("Division par 0 impossible");
 				return -1;
 			}
